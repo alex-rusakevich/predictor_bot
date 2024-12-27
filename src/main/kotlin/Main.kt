@@ -2,26 +2,27 @@ import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.command
 import com.github.kotlintelegrambot.entities.ChatId
+import com.github.kotlintelegrambot.logging.LogLevel
 import io.github.cdimascio.dotenv.Dotenv
 
-class Main {
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            val dotenv = Dotenv.load()
+fun main() {
+    val dotenv = Dotenv.load()
 
-            val bot = bot {
-                token = dotenv["BOT_TOKEN"]
-                dispatch {
-                    command("start") {
-                        bot.sendMessage(chatId = ChatId.fromId(message.chat.id), text = "Привет! Я проведу тебя через энграммы и арканы бесконечного Космоса, только напиши мне /predict")
-                    }
-                    command("predict") {
-                        bot.sendMessage(ChatId.fromId(message.chat.id), text = Prediction.getRandomPrediciton().text)
-                    }
-                }
+    val bot = bot {
+        token = dotenv["BOT_TOKEN"]
+        logLevel = LogLevel.Error
+        dispatch {
+            command("start") {
+                bot.sendMessage(
+                    chatId = ChatId.fromId(message.chat.id),
+                    text = "Привет! Я проведу тебя через энграммы и арканы бесконечного Космоса, только напиши мне /predict"
+                )
             }
-            bot.startPolling()
+            command("predict") {
+                val predictionText = Prediction.getRandomPrediction().text
+                bot.sendMessage(ChatId.fromId(message.chat.id), text = predictionText)
+            }
         }
     }
+    bot.startPolling()
 }

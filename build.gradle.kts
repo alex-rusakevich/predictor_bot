@@ -22,3 +22,13 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+tasks.jar {
+    manifest.attributes["Main-Class"] = "MainKt"
+    val dependencies = configurations
+        .runtimeClasspath
+        .get()
+        .map { zipTree(it) }
+    from(dependencies)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
